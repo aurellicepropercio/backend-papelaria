@@ -26,40 +26,56 @@ const cep = [
         "ddd": "63",
         "siafi": "9241"
       }
+
 ]
 const usuario=[
     {nome:'carlos', idade:'20', peso:'100'},
     {nome:'pedro', idade:'30'},
     {nome:'joao', idade:'18', peso: '75', cep: '77807060'}
 ]
-const alunos=["ana silva","carlos oliveira","marina santos","rafaela costa"]
-alunos[1]
-const mat={'idaluno':'1','idcurso':'3'}
-const maticula=[
-    {'idaluno':'1','idcurso':'3'},
-    {'idaluno':'3','idcurso':'5'}
 
-
+const alunos=[
+    "ana silva",
+    "carlos oliveira",
+    "marina santos",
+    "rafaela costa",
+    "pedro almeida"
 ]
 const cursos=[
-    'eletricista de manutenção industrial',
-    'mecanico de usinagem',
-    'tecnico em automação industrial',
-    'soldador de esteuturas metalicas',
-    'tecnico em eletroeletronica',
-    'operador de maquinas cnd'
-    
-    ]
-app.use("/matricula/:id",(req, res, next)=>{
-    const id=req.params.id;
-    const nome=alunos[id]
-    const dados = matricula.filter(linha => (linha.idaluno == id))
-    const nomecurso = cursos[dados.idcurso]
+    'Eletricista de Manutenção Industrial',
+    'Mecânico de Usinagem',
+    'Técnico em Automação Industrial',
+    'Soldador de Estruturas Metálicas',
+    'Técnico em Eletroeletrônica',
+    'Operador de Máquinas CNC',
+    'Técnico em Logística',
+    'Programador de Computador',
+    'Desenhista Técnico Mecânico',
+    'Técnico em Segurança do Trabalho'
+]
+
+const matricula=[
+    {'idaluno':'2','idcurso':'6'},
+    {'idaluno':'3','idcurso':'5'}
+
+]
+
+app.use("/matricula/:idaluno",(req, res, next)=>{
+    const id =req.params.idaluno;
+    const nome =alunos[id]
+    const matriculado = matricula.filter (linha=>linha.idaluno==id)
+    const nomecurso = cursos[matriculado[0].idcurso]
+    function findByKey(key, value) {
+        return (item, i) => item[key] === value
+    }
+        let findParams = findByKey('idcurso',matriculado[0].idcurso )
+        let index = matricula.findIndex(findParams)
     const resposta= {
         idaluno:id,
         nomedoaluno:nome,
         cursomatriculado:nomecurso,
-        idmatricula:
+        idmatricula: index,
+        idcurso :matriculado[0].idcurso,
         mensagem:"Dados da Matrícula"
     }
     res.send(resposta)
