@@ -22,25 +22,64 @@ const usuario=[
 {
     id:2,
     nome:"pedro"
-},
+}
 ]
 //consultar todos os dados
 router.get("/",(req,res,next)=>{
-  db.all('SELECT * FROM usuario', (error, rows) => {
+  db.all('SELECT * FROM usuarios', (error, rows) => {
     if (error) {
-        return res.status(500)({
+        return res.status(500).send({
             error: error.message
-        });
+        })
     }
-    }
-  )
+    res.status(200).send({
+      mensagem: "Aqui eta a lista de todos os usuarios",
+      usuarios: rows  
+    })
+
+    })
     
 })
 
-// aqui salvamos dados do usuário
-router.post("/",(req,res,next)=>{
 
- 
+router.get("/:id",(req,res,next)=>{
+    const {id} = req.params;
+    db.get('SELECT * FROM usuarios where id=?',[id], (error, rows) => {
+      if (error) {
+          return res.status(500).send({
+              error: error.message
+          })
+      }
+      res.status(200).send({
+        mensagem: "Aqui está o cadastro do usuarios",
+        usuarios: rows  
+      })
+  
+    })
+      
+  })
+  
+  //const salvar=()=> {} (esta seta => é o mesmo que usar o nome function)
+  //function salvardados(){}
+
+ // aqui salvamos dados do usuário
+router.post("/",(req,res,next)=>{
+     const {nome,email,senha} = req.body;
+    db.serialize(()=> {
+        const insertUsuario = db.prepare(`
+        INSERT INTO usuarios(nome, email, senha)VALUES(?,?,?)`);
+        insertUsuario.run(nome, email,senha);
+        insertUsuario.finalize();
+    })
+    process.on("SIGINT",() => {
+        db.close((err)=> {
+          if (err) {
+            return res.status(304).send(err.message);
+          }
+        })
+    })
+    res.status(200)
+    .send({ mensagem: "Usuario salvo com sucesso"});
 });
 
 // aqui podemos alterar dados do usuário

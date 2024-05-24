@@ -1,0 +1,7 @@
+-- database: c:\projeto\backend\database.db
+
+-- Pressione o botão ▷ no canto superior direito da janela para executar todo o arquivo.
+create table usuario(
+    id in
+)
+SELECT * FROM "table-name";
