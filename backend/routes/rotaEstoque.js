@@ -4,13 +4,16 @@ const sqlite3 = require("sqlite3").verbose();
 // sqlite3 tipo de banco de dados vou criar
 const db = new sqlite3.Database("database.db");
  //db criar um banco de dados
-const usuarios=["joao", "pedro"]
+
 db.run(`CREATE TABLE IF NOT EXISTS
- ´produto ( 
+ ´estoque ( 
     id INTERGER PRIMARY KEY AUTOINCREMENT,
-    descricao TEXT,
-    estoque_minimo INT,
-    estoque_maximo INT)`
+    id_produto INT,
+    quantidade Real,
+    valor_unitário Real,
+    Totsl Real
+    )
+   `
     , (createTableError)=> {
         if (createTableError) {
             return res.status(500).send({
@@ -18,26 +21,17 @@ db.run(`CREATE TABLE IF NOT EXISTS
             });
         }
     });
-const usuario=[
-{
-    id:'1',
-    nome:"Joao"
-},
-{
-    id:2,
-    nome:"pedro"
-}
-]
+
 //consultar todos os dados
 router.get("/",(req,res,next)=>{
-  db.all('SELECT * FROM produto', (error, rows) => {
+  db.all('SELECT * FROM estoque', (error, rows) => {
     if (error) {
         return res.status(500).send({
             error: error.message
         })
     }
     res.status(200).send({
-      mensagem: "Aqui eta a lista de todos os Produtos",
+      mensagem: "Aqui está a lista de todo o estoque",
       usuarios: rows  
     })
 
@@ -46,17 +40,17 @@ router.get("/",(req,res,next)=>{
 })
 
     
-//consultar apenas um produto pelo id
+//consultar apenas um estoque pelo id
 router.get("/:id",(req,res,next)=>{
     const {id} = req.params;
-    db.get('SELECT * FROM produto where id=?',[id], (error, rows) => {
+    db.get('SELECT * FROM estoque where id=?',[id], (error, rows) => {
       if (error) {
           return res.status(500).send({
               error: error.message
           })
       }
       res.status(200).send({
-        mensagem: "Aqui está o cadastro do Produto",
+        mensagem: "Aqui está o cadastro do Estoque",
         usuarios: rows  
       })
   
@@ -67,15 +61,15 @@ router.get("/:id",(req,res,next)=>{
   //const salvar=()=> {} (esta seta => é o mesmo que usar o nome function)
   //function salvardados(){}
 
- // aqui salvamos dados do produto
+ // aqui salvamos dados do estoque
 router.post("/",(req,res,next)=>{
-     const {descricao,estoque_minimo,estoque_maximo} 
+     const {id_produto,quantidade,valor_unitario,total} 
      = req.body;
     db.serialize(()=> {
-        const insertProduto = db.prepare(`
-        INSERT INTO produto(descricao,estoque_minimo,estoque_maximo)VALUES(?,?,?)`);
-        insertProduto.run(descricao,estoque_minimo,estoque_maximo);
-        insertProduto.finalize();
+        const insertEstoque = db.prepare(`
+        INSERT INTO estoque(id_produto,quantidade,valor_unitario,)VALUES(?,?,?,)`);
+        insertEstoque.run(id_produto,quantidade,valor_unitario);
+        insertEstoque.finalize();
     })
     process.on("SIGINT",() => {
         db.close((err)=> {
@@ -85,36 +79,36 @@ router.post("/",(req,res,next)=>{
         })
     })
     res.status(200)
-    .send({ mensagem: "Produto salvo com sucesso!"});
+    .send({ mensagem: "Estoque salvo com sucesso!"});
 });
 
-// aqui podemos alterar dados do produto
+// aqui podemos alterar dados do estoque
 router.put("/",(req,res,next)=>{
-   const {id,descricao,estoque_minimo,estoque_maximo} = req.body;
+   const {id,id_produto,quantidade,valor_unitario} = req.body;
    db.run(`Update produto SET 
-        descicao=?,
-        estoque_minimo=?, 
-        estoque_maximo=? 
-        where id=?`,[descricao,estoque_minimo,estoque_maximo,id], (error, rows) => {
+           id_produto=?,
+           quantidade=?, 
+           valor_unitario=? 
+       where id=?`,[id_produto,quantidade,valor_unitario,id], (error, rows) => {
     if (error) {
         return res.status(500).send({
             error: error.message
         })
     } res.status(200).send(
-      {mensagem: "Produto de id: "+id+" deletado com sucesso"});
+      {mensagem: "Dados do Estoque salvos com sucesso"});
   })
-  //posso colocar na mensagem "Produto de descrição:"+descricao+" de id:"+id+" dados alterados com sucesso"
+  //posso colocar na mensagem "estoque de descrição:"+descricao+" de id:"+id+" dados alterados com sucesso"
 });
- // Aqui podemos deletar o cadastro de um produto por meio do id
+ // Aqui podemos deletar o cadastro de um estoque por meio do id
 router.delete("/:id",(req,res,next)=>{
   const {id} = req.params
-  db.run('DELETE FROM produtos where id=?',[id], (error, rows) => {
+  db.run('DELETE FROM estoque where id=?',[id], (error, rows) => {
     if (error) {
         return res.status(500).send({
             error: error.message
         })
     } res.status(200).send(
-      {mensagem: "Produto de id: "+id+" deletado com sucesso"});
+      {mensagem: "Dados do estoque deletado com sucesso"});
   })
   
 
