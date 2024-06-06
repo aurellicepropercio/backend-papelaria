@@ -4,14 +4,12 @@ const sqlite3 = require("sqlite3").verbose();// sqlite3 tipo de banco de dados v
 const db = new sqlite3.Database("database.db"); //db criar um banco de dados
 const usuarios=["joao", "pedro"]
 db.run(`CREATE TABLE IF NOT EXISTS
- usuarios ( id INTERGER PRIMARY KEY AUTOINCREMENT,
+ usuarios ( id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome text,
     email text,
     senha text)`, (createTableError)=> {
         if (createTableError) {
-            return res.status(500).send({
-                error: createTableError.message
-            });
+         
         }
     });
 const usuario=[

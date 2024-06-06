@@ -6,16 +6,14 @@ const db = new sqlite3.Database("database.db");
  //db criar um banco de dados
 const usuarios=["joao", "pedro"]
 db.run(`CREATE TABLE IF NOT EXISTS
- ´produto ( 
-    id INTERGER PRIMARY KEY AUTOINCREMENT,
+ produto ( 
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     descricao TEXT,
     estoque_minimo INT,
     estoque_maximo INT)`
     , (createTableError)=> {
         if (createTableError) {
-            return res.status(500).send({
-                error: createTableError.message
-            });
+         
         }
     });
 const usuario=[

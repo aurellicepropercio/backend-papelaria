@@ -6,8 +6,8 @@ const db = new sqlite3.Database("database.db");
  //db criar um banco de dados
 
 db.run(`CREATE TABLE IF NOT EXISTS
- ´entrada ( 
-    id INTERGER PRIMARY KEY AUTOINCREMENT,
+ entrada ( 
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_produto INT,
     quantidade Real ,
     valor_unitário Real,
@@ -15,9 +15,7 @@ db.run(`CREATE TABLE IF NOT EXISTS
     )`
     , (createTableError)=> {
         if (createTableError) {
-            return res.status(500).send({
-                error: createTableError.message
-            });
+        
         }
     });
 
@@ -66,10 +64,11 @@ router.post("/",(req,res,next)=>{
      = req.body;
     db.serialize(()=> {
         const insertEntrada = db.prepare(`
-        INSERT INTO entrada(id_produto,quantidade,vslor_unitario,data_entrada)VALUES(?,?,?,?)`);
+        INSERT INTO entrada(id_produto,quantidade,valor_unitario,data_entrada)VALUES(?,?,?,?)`);
         insertEntrada.run(id_produto, quantidade, valor_unitario, data_entrada);
-        insertEntradae.finalize();
+        insertEntrada.finalize();
     });
+    
     atualizarestoque(id_produto,quantidade,valor_unitario);
     
     process.on("SIGINT",() => {
@@ -85,20 +84,25 @@ router.post("/",(req,res,next)=>{
   })
 
   function atualizarestoque(id_produto,quantidade,valor_unitario){
-    db.get('SELECT * FROM entrada where id_produto=?',[id], (error, rows) => {
+    db.get('SELECT * FROM estoque where id_produto=?',[id_produto], (error, rows) => {
       if (error) {
           return res.status(500).send({
               error: error.message
           })
       }
-    if(rows.length>0){
+    if(rows ){
       //atualizar a quantidade no estoque
       //acrescentando a quantidade inserida em entrada 1
-      const quantidadeestoque=rows[0].quantidade;
+      
+      const quantidadeestoque=rows.quantidade;
       const quantidadeatualizada=parseFloat(quantidade)+parseFloat(quantidadeestoque);
       db.serialize(()=> {
+        //parsefloat para dizer que essa variavel é um valor numericos e não uma palavra
+        //ex:parseFloat(quantidade)+parseFloat(quantidadeestoque),ou quando vou usar  numeros fracionados ex: 1,000 ,o,1
+        //intfloat quando usar valor numerico inteiro ex: 1 ,2 ,3...
+        //update é pra alterar o que já existe
         const updateEstoque = db.prepare(`
-        UPDATE estoque SET id_produto=?,quantidade=?,
+       UPDATE estoque SET quantidade=?,
         valor_unitario=? where id_produto=?`);
         updateEstoque.run(quantidadeatualizada, valor_unitario, id_produto);
         updateEstoque.finalize();
@@ -108,7 +112,7 @@ router.post("/",(req,res,next)=>{
       //inserir a mesma quantidade inserida em entrada
       db.serialize(()=> {
         const insertEstoque = db.prepare(`
-        INSERT INTO estoque(id_produto,quantidade,vslor_unitario)
+        INSERT INTO estoque(id_produto,quantidade,valor_unitario)
         VALUES(?,?,?)`);
         insertEstoque.run(id_produto, quantidade, valor_unitario);
         insertEstoque.finalize();

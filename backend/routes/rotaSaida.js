@@ -6,7 +6,7 @@ const db = new sqlite3.Database("database.db");
  //db criar um banco de dados
 
 db.run(`CREATE TABLE IF NOT EXISTS
- ´saida ( 
+ saida ( 
     id INTERGER PRIMARY KEY AUTOINCREMENT,
     id_produto INT,
     quantidade Real,
@@ -14,9 +14,7 @@ db.run(`CREATE TABLE IF NOT EXISTS
     data_saida`
     , (createTableError)=> {
         if (createTableError) {
-            return res.status(500).send({
-                error: createTableError.message
-            });
+    
         }
     });
 
