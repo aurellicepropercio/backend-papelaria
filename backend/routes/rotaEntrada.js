@@ -95,6 +95,7 @@ router.post("/",(req,res,next)=>{
       //acrescentando a quantidade inserida em entrada 1
       
       const quantidadeestoque=rows.quantidade;
+      
       const quantidadeatualizada=parseFloat(quantidade)+parseFloat(quantidadeestoque);
       db.serialize(()=> {
         //parsefloat para dizer que essa variavel é um valor numericos e não uma palavra
