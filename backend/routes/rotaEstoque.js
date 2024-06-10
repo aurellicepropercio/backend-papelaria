@@ -7,7 +7,7 @@ const db = new sqlite3.Database("database.db");
 
 db.run(`CREATE TABLE IF NOT EXISTS
  estoque ( 
-    id INTERGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_produto INT,
     quantidade Real,
     valor_unitario Real,
